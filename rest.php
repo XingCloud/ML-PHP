@@ -65,8 +65,7 @@ class SDKRest{
     }
 
     public function restAdd($words){
-    	$date = new DateTime();
-		$timeStamp = $date->getTimestamp();
+		$timeStamp = ceil(time());
 		$hash = md5($timeStamp.$this->apiKey);
         $data = array("service_name"=>$this->serviceName, "data"=>$words, "timestamp" => $timeStamp, "hash" => $hash);
         $requestUrl = $this->restRequest($this->restStringAdd, $data);
