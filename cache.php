@@ -25,7 +25,7 @@ class CacheObj{
         }else{
             $this->filePath = $this->cacheDir."\\".$this->serviceName.$this->tarLang.$this->fileName;
         }
-        if(ML_FILE_INFO_SWITCH){
+        if(ML_AUTO_UPDATE_FILE){
         	$this->restObj = new SDKRest($serviceName, $tarLang, $this->filePath);
         }
 
@@ -43,7 +43,7 @@ class CacheObj{
         if(@$this->contentArray[$words]){
             return $this->contentArray[$words];
         }else{
-        	if(ML_STRING_ADD_SWITCH){
+        	if(ML_AUTO_ADD_STRING){
             	$this->restObj->restAdd($words);
         	}
             return $words;

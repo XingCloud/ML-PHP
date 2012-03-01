@@ -19,7 +19,7 @@ define('ML_REST_STRING_ADD', 'http://10.1.4.199:2012/api/v1/string/add');
 //For example, if ML_STRING_ADD_SWITCH is TRUE, it will add the new words to ML
 //server. Otherwise, it won't add them to ML server, and so it won't generate any
 //web request. 
-define('ML_STRING_ADD_SWITCH', TRUE);
-define('ML_FILE_INFO_SWITCH', TRUE);
+define('ML_AUTO_ADD_STRING', FALSE);
+define('ML_AUTO_UPDATE_FILE', FALSE);
 
 ?>
