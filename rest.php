@@ -34,8 +34,7 @@ class SDKRest{
     }
     
     public function getFileInfo(){
-    	$date = new DateTime();
-		$timeStamp = $date->getTimestamp();
+    	$timeStamp = ceil(time());
 		$hash = md5($timeStamp.$this->apiKey);
     	$data = array("service_name"=>$this->serviceName, "lang"=>$this->tarLang, "file_path" => "xc_words.xml", "timestamp" => $timeStamp, "hash" => $hash);
     	return $this->restRequest($this->restFileGet, $data);
