@@ -1,11 +1,10 @@
 <?php
 require("ml.php");
 
-$serviceName = "dstest001";
 $srcLang = "cn";
 $tarLang = "en";
 
-$sdkObj = new ML($serviceName, $srcLang, $tarLang);
+$sdkObj = new ML($srcLang, $tarLang);
 echo "<br>";
 $word = "行云,你好";
 $ab = $sdkObj->trans($word);
@@ -13,6 +12,11 @@ echo $ab;
 
 echo "<br>";
 $word = "中国";
+$ab = $sdkObj->trans($word);
+echo $ab;
+
+echo "<br>";
+$word = "我很生气，后果很严重";
 $ab = $sdkObj->trans($word);
 echo $ab;
 

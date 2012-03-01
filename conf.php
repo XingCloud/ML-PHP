@@ -8,8 +8,10 @@ if(PATH_SEPARATOR == ":"){
 }
 //The ML_API_KEY is the only one key of your project accessed to ML server.
 //The ML_CACHE_FILE_NAME is the cache file name.
-define('ML_API_KEY', 'e08938e29e4ab7705cbc0524c93d206f');
+//The ML_SERVICE_NAME is your only project name.
+define('ML_API_KEY', 'eb3f95b5ae75d363a0cbbbf741545bf6');
 define('ML_CACHE_FILE_NAME','defaultLang.php');
+define('ML_SERVICE_NAME', 'php_test001');
 
 //The address which the user needn't changed any.
 define('ML_REST_FILE_INFO', 'http://i.xingcloud.com/api/v1/file/info');

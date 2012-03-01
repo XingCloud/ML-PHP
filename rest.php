@@ -12,13 +12,13 @@ class SDKRest{
 	public $apiKey = "";
 	public $fileMd5 = "";
 	
-    public function __construct($serviceName, $tarLang, $filePath){
+    public function __construct($tarLang, $filePath){
         $this->restFileGet = ML_REST_FILE_INFO;
         $this->restStringAdd = ML_REST_STRING_ADD;
         $this->md5FileName = ML_MD5_FILE_NAME;
         $this->cacheDir = ML_CACHE_DIR;
         $this->apiKey = ML_API_KEY;
-        $this->serviceName= $serviceName;
+        $this->serviceName= ML_SERVICE_NAME;
         $this->tarLang = $tarLang;
         $this->filePath = $filePath;
         $this->fileMd5 = $fileContentMd5;
@@ -35,7 +35,7 @@ class SDKRest{
     public function getFileInfo(){
     	$timeStamp = ceil(time());
 		$hash = md5($timeStamp.$this->apiKey);
-    	$data = array("service_name"=>$this->serviceName, "lang"=>$this->tarLang, "file_path" => "xc_words.xml", "timestamp" => $timeStamp, "hash" => $hash);
+    	$data = array("service_name"=>$this->serviceName, "lang"=>$this->tarLang, "file_path" => "xc_words.json", "timestamp" => $timeStamp, "hash" => $hash);
     	return $this->restRequest($this->restFileGet, $data);
     }
     
@@ -46,20 +46,6 @@ class SDKRest{
     		$this->fileMd5 = $md5Val;
     		return True;
     	}
-    }
-    
-	public function xml2phpString($xmlDoc){
-        $phpStr = "<?php\r\n\$fileContentMd5=\"".$this->fileMd5."\";\r\n\$cacheArray=array();\r\n";
-        $unitDom = $xmlDoc->getElementsByTagName("unit");
-        if($unitDom->length == 0){
-            return $retJson;
-        }
-        foreach($unitDom as $unit){
-            $src = $unit->getElementsByTagName("source");
-            $dst = $unit->getElementsByTagName("target");
-            $phpStr = $phpStr."\$cacheArray[\"".$src->item(0)->nodeValue."\"]=\"".$dst->item(0)->nodeValue."\";\r\n";
-        }
-        return $phpStr."?>";
     }
 
     public function restAdd($words){
@@ -91,10 +77,26 @@ class SDKRest{
     }
 
     public function downloadFile($remoteFilePath, $localFilePath){
-        $xmlDoc = new DOMDocument();
-        $xmlDoc->load($remoteFilePath);
-        $cacheArray = $this->xml2phpString($xmlDoc);
-        $this->setContent($cacheArray, $localFilePath);
+        $curl_handle = curl_init();
+        curl_setopt($curl_handle, CURLOPT_URL, $remoteFilePath);
+		curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($curl_handle, CURLOPT_CONNECTTIMEOUT, $timeout);
+		$contents = curl_exec($curl_handle);
+		if(strlen($contents) == 2){
+			$cacheArray = array();
+		}else{
+        	$cacheArray = json_decode($contents);
+		}
+		$cacheContent = $this->generatePHPFile($cacheArray);
+        $this->setContent($cacheContent, $localFilePath);
+    }
+    
+    public function generatePHPFile($contentArray){
+    	$phpStr = "<?php\r\n\$fileContentMd5=\"".$this->fileMd5."\";\r\n\$cacheArray=array();\r\n";
+    	foreach ($contentArray as $key => $val){
+    		$phpStr = $phpStr."\$cacheArray[\"".$key."\"]=\"".$val."\";\r\n";
+    	}
+    	return $phpStr."?>";
     }
     
     public function setContent($cacheArray, $localFilePath){

@@ -2,12 +2,12 @@
 require("cache.php");
 class ML{
 	public $tranSign = False;
-    public function __construct($serviceName, $srcLang, $tarLang){
+    public function __construct($srcLang, $tarLang){
     	if($srcLang == $tarLang){
     		$this->tranSign = False;
     	}else{
     		$this->tranSign = True;
-        	$this->cache = new CacheObj($serviceName, $tarLang);
+        	$this->cache = new CacheObj($tarLang);
     	}
     }
 

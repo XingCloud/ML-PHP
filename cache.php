@@ -12,9 +12,8 @@ class CacheObj{
     public $restObj;
     public $fileContentMd5 = "";
 
-    public function __construct($serviceName, $tarLang){
-    	global $cacheSign;
-        $this->serviceName = $serviceName;
+    public function __construct($tarLang){
+        $this->serviceName = ML_SERVICE_NAME;
         $this->tarLang = $tarLang;
         $this->cacheDir = ML_CACHE_DIR;
         $this->fileName = ML_CACHE_FILE_NAME;
@@ -26,7 +25,7 @@ class CacheObj{
             $this->filePath = $this->cacheDir."\\".$this->serviceName.$this->tarLang.$this->fileName;
         }
         if(ML_AUTO_UPDATE_FILE){
-        	$this->restObj = new SDKRest($serviceName, $tarLang, $this->filePath);
+        	$this->restObj = new SDKRest($tarLang, $this->filePath);
         }
 
 	    if(file_exists($this->filePath)){
