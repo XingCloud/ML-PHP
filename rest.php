@@ -13,7 +13,6 @@ class SDKRest{
 	public $fileMd5 = "";
 	
     public function __construct($serviceName, $tarLang, $filePath){
-        global $address;
         $this->restFileGet = ML_REST_FILE_INFO;
         $this->restStringAdd = ML_REST_STRING_ADD;
         $this->md5FileName = ML_MD5_FILE_NAME;

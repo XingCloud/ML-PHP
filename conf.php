@@ -12,8 +12,8 @@ define('ML_API_KEY', 'e08938e29e4ab7705cbc0524c93d206f');
 define('ML_CACHE_FILE_NAME','defaultLang.php');
 
 //The address which the user needn't changed any.
-define('ML_REST_FILE_INFO', 'http://10.1.4.199:2012/api/v1/file/info');
-define('ML_REST_STRING_ADD', 'http://10.1.4.199:2012/api/v1/string/add');
+define('ML_REST_FILE_INFO', 'http://i.xingcloud.com/api/v1/file/info');
+define('ML_REST_STRING_ADD', 'http://i.xingcloud.com/api/v1/string/add');
 
 //Environment configuration. The two switch control the request the ML server. 
 //For example, if ML_STRING_ADD_SWITCH is TRUE, it will add the new words to ML
