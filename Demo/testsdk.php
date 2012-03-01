@@ -5,13 +5,6 @@ $serviceName = "dstest001";
 $srcLang = "cn";
 $tarLang = "en";
 
-//ML::init($serviceName, $tarLang);
-//
-//$words = "求交往";
-//
-//$abc = ML::trans($words);
-//echo $abc;
-
 $sdkObj = new ML($serviceName, $srcLang, $tarLang);
 echo "<br>";
 $word = "行云,你好";
