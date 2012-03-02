@@ -15,13 +15,12 @@ class SDKRest{
     public function __construct($tarLang, $filePath){
         $this->restFileGet = ML_REST_FILE_INFO;
         $this->restStringAdd = ML_REST_STRING_ADD;
-        $this->md5FileName = ML_MD5_FILE_NAME;
         $this->cacheDir = ML_CACHE_DIR;
         $this->apiKey = ML_API_KEY;
         $this->serviceName= ML_SERVICE_NAME;
         $this->tarLang = $tarLang;
         $this->filePath = $filePath;
-        $this->fileMd5 = $fileContentMd5;
+        @$this->fileMd5 = $fileContentMd5;
         $ret = $this->getFileInfo();
         if($ret){
 	        $retArray = json_decode($ret, true);
@@ -80,7 +79,7 @@ class SDKRest{
         $curl_handle = curl_init();
         curl_setopt($curl_handle, CURLOPT_URL, $remoteFilePath);
 		curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($curl_handle, CURLOPT_CONNECTTIMEOUT, $timeout);
+		curl_setopt($curl_handle, CURLOPT_CONNECTTIMEOUT, 30);
 		$contents = curl_exec($curl_handle);
 		if(strlen($contents) == 2){
 			$cacheArray = array();
