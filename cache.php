@@ -20,23 +20,15 @@ class CacheObj{
     public $restObj;
     public $fileContentMd5 = "";
     public $apiKey = "";
-    
+    public $autoAddTrans = FALSE;
     public function __construct($serviceName, $apiKey, $tarLang, $autoAddTrans = FALSE, $autoUpdateFile = FALSE, $cacheDir = ""){
         $this->serviceName = $serviceName;
         $this->tarLang = $tarLang;
-        
-        if($this->cacheDir == ""){
-                $this->filePath = $this->serviceName.$this->tarLang.".php";
-        }elseif(PATH_SEPARATOR == ":"){
-                $this->filePath = $cacheDir."/".$this->serviceName."_".$this->tarLang.".php";
-        }else{
-            $this->filePath = $cacheDir."\\".$this->serviceName."_".$this->tarLang.".php";
-        }
-        
+        $this->autoAddTrans = $autoAddTrans;
+        $this->filePath = trim($cacheDir.DIRECTORY_SEPARATOR.$this->serviceName."_".$this->tarLang.".php", DIRECTORY_SEPARATOR);
         if($autoUpdateFile){
-        	$this->restObj = new SDKRest($this->serviceName, $apiKey, $tarLang, $this->filePath);
+        	$this->restObj = new RestWrapper($this->serviceName, $apiKey, $tarLang, $this->filePath);
         }
-
 	    if(file_exists($this->filePath)){
 			require($this->filePath);
 			$this->contentArray = $cacheArray;
@@ -54,10 +46,10 @@ class CacheObj{
      */
 
     public function findString($words){
-        if(@$this->contentArray[$words]){
+        if(array_key_exists($words, $this->contentArray)){
             return $this->contentArray[$words];
         }else{
-        	if($autoAddTrans){
+        	if($this->autoAddTrans){
             	$this->restObj->restAdd($words);
         	}
             return $words;

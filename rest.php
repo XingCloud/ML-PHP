@@ -8,7 +8,7 @@ define('ML_REST_HOST', 'http://i.xingcloud.com/api/v1/');
  * @param string tarLang 翻译结果对应语言的缩写
  *
  */
-class SDKRest{
+class RestWrapper{
 
     public $filePath = "";
     public $serviceName= "";
@@ -26,7 +26,9 @@ class SDKRest{
         $this->serviceName= $serviceName;
         $this->tarLang = $tarLang;
         $this->filePath = $filePath;
-        @$this->fileMd5 = $fileContentMd5;
+        if(isset($fileContentMd5)){
+        	$this->fileMd5 = $fileContentMd5;
+        }
         $ret = $this->getFileInfo();
         if($ret){
 	        $retArray = json_decode($ret, true);
@@ -39,6 +41,22 @@ class SDKRest{
     
     /**
      * 从多语言服务器端获取本地缓存所对应文件的状态信息。
+     * 返回值为：
+     *  @return
+     *  {
+	 * 	    'data': {
+	 *	        'file_path': ,	文件路径
+	 *	        'status': ,		文件当前状态
+	 *	        'source': ,		源语言
+	 *	        'target': ,		目标语言
+	 *	        'source_words_count': ,	原词总数
+	 *	        'human_translated': ,	人工翻译词总数
+	 *	        'machine_translated': ,	机器翻译词总数
+	 *	        'request_address': ,	文件http可访问地址
+	 *	        'length': ,				文件内容长度
+	 *	        'md5': ,				文件内容md5值
+	 *	    }
+	 *	}
      */
     public function getFileInfo(){
     	$timeStamp = ceil(time()*1000);
@@ -57,7 +75,7 @@ class SDKRest{
     }
 
     /**
-     * 将需要翻译的词条发送到多语言服务器上进行翻译
+     * 将需要翻译的词条发送到多语言服务器上进行翻译，成功返回OK，失败返回FALSE
      * @param string $words 需要翻译的词条
      * 
      */
@@ -65,7 +83,7 @@ class SDKRest{
 		$timeStamp = ceil(time()*1000);
 		$hash = md5($timeStamp.$this->apiKey);
         $data = array("service_name"=>$this->serviceName, "data"=>$words, "timestamp" => $timeStamp, "hash" => $hash);
-        $requestUrl = $this->restPostRequest($this->restStringAdd, $data);
+        $retVal = $this->restPostRequest($this->restStringAdd, $data);
         return;
     }
     /**
@@ -73,11 +91,15 @@ class SDKRest{
      * @param string $url Get请求地址，如：http://host/path?key1=val1&key2=val2...
      */
 	public function restGetRequest($url){
-        $curl_handle = curl_init();
-        curl_setopt($curl_handle, CURLOPT_URL, $url);
-        curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, 1);
-        $fileInfo = curl_exec($curl_handle);
-        curl_close($curl_handle);
+		try {
+	        $curl_handle = curl_init();
+	        curl_setopt($curl_handle, CURLOPT_URL, $url);
+	        curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, 1);
+	        $fileInfo = curl_exec($curl_handle);
+	        curl_close($curl_handle);
+		} catch (Exception $e){
+			echo $e->getMessage()."at line number is:".$e->getLine()."in the ".$e->getFile();
+		}
         return $fileInfo;
     }
  
@@ -92,18 +114,22 @@ class SDKRest{
             $o.="$k=".urlencode($v)."&";
         }
         $data = substr($o, 0, -1);
-        $curl_handle = curl_init();
-        curl_setopt($curl_handle, CURLOPT_URL, $url);
-        curl_setopt($curl_handle, CURLOPT_POST, 1);
-        curl_setopt($curl_handle, CURLOPT_HEADER, 0);
-        curl_setopt($curl_handle, CURLOPT_TIMEOUT, 30);
-        curl_setopt($curl_handle, CURLOPT_CONNECTTIMEOUT, 2);
-        curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl_handle, CURLOPT_FAILONERROR, 1);
-        curl_setopt($curl_handle, CURLOPT_POSTFIELDS, $data);
-        $filepath = curl_exec($curl_handle);
-        curl_close($curl_handle);
-        return $filepath;
+        try {
+	        $curl_handle = curl_init();
+	        curl_setopt($curl_handle, CURLOPT_URL, $url);
+	        curl_setopt($curl_handle, CURLOPT_POST, 1);
+	        curl_setopt($curl_handle, CURLOPT_HEADER, 0);
+	        curl_setopt($curl_handle, CURLOPT_TIMEOUT, 30);
+	        curl_setopt($curl_handle, CURLOPT_CONNECTTIMEOUT, 2);
+	        curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, 1);
+	        curl_setopt($curl_handle, CURLOPT_FAILONERROR, 1);
+	        curl_setopt($curl_handle, CURLOPT_POSTFIELDS, $data);
+	        $ret = curl_exec($curl_handle);
+	        curl_close($curl_handle);
+        } catch (Exception $e){
+        	echo $e->getMessage()."at line number is:".$e->getLine()."in the ".$e->getFile();
+        }
+        return $ret;
     }
 
     public function downloadFile($remoteFilePath, $localFilePath){
@@ -133,8 +159,12 @@ class SDKRest{
     }
     
     public function setContent($cacheArray, $localFilePath){
-    	@file_put_contents($localFilePath, $cacheArray);
-    	@chmod($localFilePath, 0777);
+    	try{
+	    	file_put_contents($localFilePath, $cacheArray);
+	    	chmod($localFilePath, 0777);
+    	}catch (Exception $e){
+    		echo $e->getMessage()."at line number is:".$e->getLine()."in the ".$e->getFile();
+    	}
     }
 }
 
