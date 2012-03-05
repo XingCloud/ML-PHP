@@ -7,11 +7,10 @@ ML PHP SDK
 	<?php
 	require("ml.php");
 	
-	$serviceName = "dstest001";
 	$srcLang = "cn";
 	$tarLang = "en";
 	
-	$sdkObj = new ML($serviceName, $srcLang, $tarLang);
+	$sdkObj = new ML("php_test002", "f58b2cc533bca5bcb73afc976a005dd1",$srcLang, $tarLang,True, True);
 	echo "<br>";
 	$word = "行云,你好";
 	$ab = $sdkObj->trans($word);
@@ -19,6 +18,16 @@ ML PHP SDK
 	
 	echo "<br>";
 	$word = "中国";
+	$ab = $sdkObj->trans($word);
+	echo $ab;
+	
+	echo "<br>";
+	$word = "人民爱你";
+	$ab = $sdkObj->trans($word);
+	echo $ab;
+	
+	echo "<br>";
+	$word = "我很生气，后果很严重";
 	$ab = $sdkObj->trans($word);
 	echo $ab;
 	

@@ -4,7 +4,7 @@ require("ml.php");
 $srcLang = "cn";
 $tarLang = "en";
 
-$sdkObj = new ML($srcLang, $tarLang);
+$sdkObj = new ML("php_test002", "f58b2cc533bca5bcb73afc976a005dd1",$srcLang, $tarLang,True, True);
 echo "<br>";
 $word = "行云,你好";
 $ab = $sdkObj->trans($word);
@@ -12,6 +12,11 @@ echo $ab;
 
 echo "<br>";
 $word = "中国";
+$ab = $sdkObj->trans($word);
+echo $ab;
+
+echo "<br>";
+$word = "人民爱你";
 $ab = $sdkObj->trans($word);
 echo $ab;
 
