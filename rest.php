@@ -18,6 +18,7 @@ class RestWrapper{
 	public $md5FileName = "";
 	public $apiKey = "";
 	public $fileMd5 = "";
+	public $logPath = "";
 	
     public function __construct($serviceName, $apiKey, $tarLang, $filePath){
         $this->restFileInfo = ML_REST_HOST."file/info";
@@ -26,6 +27,7 @@ class RestWrapper{
         $this->serviceName= $serviceName;
         $this->tarLang = $tarLang;
         $this->filePath = $filePath;
+        $this->logPath = rtrim($filePath, ".php").".log";
         if(isset($fileContentMd5)){
         	$this->fileMd5 = $fileContentMd5;
         }
@@ -34,7 +36,7 @@ class RestWrapper{
 	        $retArray = json_decode($ret, true);
 	        if($this->updateFileContent($retArray["data"]["md5"])){
 		        $remoteFilePath = $retArray["data"]["request_address"];
-		        $this->downloadFile($remoteFilePath, $filePath);
+		        $this->downloadFile($remoteFilePath, $this->filePath);
 	        }
         }
     }
@@ -98,7 +100,7 @@ class RestWrapper{
 	        $fileInfo = curl_exec($curl_handle);
 	        curl_close($curl_handle);
 		} catch (Exception $e){
-			echo $e->getMessage()."at line number is:".$e->getLine()."in the ".$e->getFile();
+			error_log($e->getMessage()."at line number is:".$e->getLine()."in the ".$e->getFile(), 3, $this->logPath);
 		}
         return $fileInfo;
     }
@@ -127,7 +129,7 @@ class RestWrapper{
 	        $ret = curl_exec($curl_handle);
 	        curl_close($curl_handle);
         } catch (Exception $e){
-        	echo $e->getMessage()."at line number is:".$e->getLine()."in the ".$e->getFile();
+        	error_log($e->getMessage()."at line number is:".$e->getLine()."in the ".$e->getFile(), 3, $this->logPath);
         }
         return $ret;
     }
@@ -163,7 +165,7 @@ class RestWrapper{
 	    	file_put_contents($localFilePath, $cacheArray);
 	    	chmod($localFilePath, 0777);
     	}catch (Exception $e){
-    		echo $e->getMessage()."at line number is:".$e->getLine()."in the ".$e->getFile();
+    		error_log($e->getMessage()."at line number is:".$e->getLine()."in the ".$e->getFile(), 3, $this->logPath);
     	}
     }
 }
