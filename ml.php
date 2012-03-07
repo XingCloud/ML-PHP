@@ -9,6 +9,7 @@ require("cache.php");
  * @param string srcLang 未翻译词条对应语言的缩写（详细请查看行云平台具体文档）
  * @param string tarLang 翻译结果对应语言的缩写
  * @param string cacheDir 本地缓存目录地址，默认是当前文件目录下
+ * @param string filename 本地缓存文件后缀名,以.json结尾
  * @param boolean autoAddTrans 是否自动添加未翻译词条到多语言服务器，默认为FALSE
  * @param boolean autoUpdateFile 是否自动从多语言服务器上更新本地缓存，默认为FALSE
  *
@@ -16,12 +17,12 @@ require("cache.php");
 class ML{
 	public $tranSign = False;
 	
-    public function __construct($serviceName, $apiKey, $srcLang, $tarLang, $autoAddTrans = FALSE, $autoUpdateFile = FALSE, $cacheDir = ""){
+    public function __construct($serviceName, $apiKey, $srcLang, $tarLang, $autoAddTrans = FALSE, $autoUpdateFile = FALSE, $fileName = "xc_words.json", $cacheDir = ""){
     	if($srcLang == $tarLang){
     		$this->tranSign = False;
     	}else{
     		$this->tranSign = True;
-        	$this->cache = new CacheObj($serviceName, $apiKey, $tarLang, $autoAddTrans, $autoUpdateFile, $cacheDir);
+        	$this->cache = new CacheObj($serviceName, $apiKey, $tarLang, $autoAddTrans, $autoUpdateFile, $fileName, $cacheDir);
     	}
     }
 	/**

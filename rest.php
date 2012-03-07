@@ -140,24 +140,16 @@ class RestWrapper{
 		curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($curl_handle, CURLOPT_CONNECTTIMEOUT, 30);
 		$contents = curl_exec($curl_handle);
-		if(strlen($contents) == 2){
-			$cacheArray = array();
-		}else{
-        	$cacheArray = json_decode($contents);
-		}
-		$cacheContent = $this->generatePHPFile($cacheArray);
+		$cacheContent = $this->generateJsonFile($contents);
         $this->setContent($cacheContent, $localFilePath);
     }
     /**
      * 本地生成缓存文件
      * @param array $contentArray 内存hashmap数据
      */
-    public function generatePHPFile($contentArray){
-    	$phpStr = "<?php\r\n\$fileContentMd5=\"".$this->fileMd5."\";\r\n\$cacheArray=array();\r\n";
-    	foreach ($contentArray as $key => $val){
-    		$phpStr = $phpStr."\$cacheArray[\"".$key."\"]=\"".$val."\";\r\n";
-    	}
-    	return $phpStr."?>";
+    public function generateJsonFile($contents){
+    	$jsonStr = "{\"fileContentMd5\":\"".$this->fileMd5."\",\"data\":".$contents."}";
+    	return $jsonStr;
     }
     
     public function setContent($cacheArray, $localFilePath){

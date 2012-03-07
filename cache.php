@@ -21,18 +21,19 @@ class CacheObj{
     public $fileContentMd5 = "";
     public $apiKey = "";
     public $autoAddTrans = FALSE;
-    public function __construct($serviceName, $apiKey, $tarLang, $autoAddTrans = FALSE, $autoUpdateFile = FALSE, $cacheDir = ""){
+    public function __construct($serviceName, $apiKey, $tarLang, $autoAddTrans = FALSE, $autoUpdateFile = FALSE, $fileName = "xc_words.json", $cacheDir = ""){
         $this->serviceName = $serviceName;
         $this->tarLang = $tarLang;
         $this->autoAddTrans = $autoAddTrans;
-        $this->filePath = trim($cacheDir.DIRECTORY_SEPARATOR.$this->serviceName."_".$this->tarLang.".php", DIRECTORY_SEPARATOR);
+        $this->filePath = trim($cacheDir.DIRECTORY_SEPARATOR.$this->serviceName."_".$this->tarLang.$fileName, DIRECTORY_SEPARATOR);
         if($autoUpdateFile){
         	$this->restObj = new RestWrapper($this->serviceName, $apiKey, $tarLang, $this->filePath);
         }
 	    if(file_exists($this->filePath)){
-			require($this->filePath);
-			$this->contentArray = $cacheArray;
-			$this->fileContentMd5 = $fileContentMd5;
+	    	$fcontent = file_get_contents($this->filePath);
+	    	$cacheCls = json_decode($fcontent, TRUE);
+			$this->contentArray = $cacheCls["data"];
+			$this->fileContentMd5 = $cacheCls["md5"];
 		}else{
 			$this->fileContentMd5 = "";
 			$this->contentArray = array();
@@ -47,7 +48,7 @@ class CacheObj{
 
     public function findString($words){
         if(array_key_exists($words, $this->contentArray)){
-            return $this->contentArray[$words];
+            return $this->contentArray["$words"];
         }else{
         	if($this->autoAddTrans){
             	$this->restObj->restAdd($words);
