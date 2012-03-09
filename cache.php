@@ -58,8 +58,8 @@ class CacheObj{
         	if($this->autoAddTrans){
             	$this->restObj->restAdd($words, $fileName);
         	}
-            return $words;
         }
+        return $words;
     }
     
     public function updateCache($fileName, $filePath){
@@ -86,7 +86,6 @@ class CacheObj{
 	    		$this->queue[$fileName] = 0;
 	    	}
 	    	asort($this->queue);
-	    	var_dump($this->queue);
 	    }
     }
 }

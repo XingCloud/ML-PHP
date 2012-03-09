@@ -79,7 +79,8 @@ class RestWrapper{
   	 *	}
      */
     public function getFilesInfo(){
-    	$timeStamp = ceil(time()*1000);
+    	$timeStamp = time()*1000;
+    	$timeStamp = ceil(sprintf("%.0f", $timeStamp));
 		$hash = md5($timeStamp.$this->apiKey);
     	$url = $this->restFileSnapshot."?service_name=".$this->serviceName."&locale=".$this->tarLang."&timestamp=".$timeStamp."&hash=".$hash;
     	return $this->restGetRequest($url);
@@ -91,7 +92,8 @@ class RestWrapper{
      * @param string $fileName 词条存储的文件名
      */
     public function restAdd($words, $fileName){
-		$timeStamp = ceil(time()*1000);
+		$timeStamp = time()*1000;
+    	$timeStamp = ceil(sprintf("%.0f", $timeStamp));
 		$hash = md5($timeStamp.$this->apiKey);
         $data = array("service_name"=>$this->serviceName, "data"=>$words, "timestamp" => $timeStamp, "hash" => $hash, "file_path" => $fileName, "create" => 1);
         $retVal = $this->restPostRequest($this->restStringAdd, $data);
