@@ -31,17 +31,42 @@ class ML{
 	 * 
 	 */
     public function trans($words, $fileName = "xc_words.json"){
-    	if(!preg_match("/.*\.json$/", $a)){
+    	if(!preg_match("/.*\.json$/", $fileName)){
     		$fileName = $fileName.".json";
     	}
         if(trim($words) and $this->tranSign){
+            $words = $this->wrapWords($words);
             $content = $this->cache->findString($words, $fileName);
-            $content = str_replace("{", "", $content);
-            $content = str_replace("}", "", $content);
+            $content = $this->unWrapWords($content);
             return $content;
         }else{
             return $words;
         }
+    }
+    public function wrapWords($words){
+        $pattern = "/<.*?>/i";
+        $num = preg_match_all($pattern, $words, $matches);
+
+        $replaceArray = array();
+        $matcheArray = array();
+        for($i = 0; $i < $num; $i++){
+            $matcheArray[$i] = "<".$matches[0][$i].">";
+            $replaceArray[$i] = "{".$matches[0][$i]."}";
+        }
+        return preg_replace($matcheArray, $replaceArray, $words);
+    }
+
+    public function unWrapWords($words){
+        $pattern = "/{.*?}/i";
+        $num = preg_match_all($pattern, $words, $matches);
+
+        $replaceArray = array();
+        $matcheArray = array();
+        for($i = 0; $i < $num; $i++){
+            $matcheArray[$i] = "{".$matches[0][$i]."}";
+            $replaceArray[$i] = trim($matches[0][$i], "{}");
+        }
+        return preg_replace($matcheArray, $replaceArray, $words);
     }
 }
 
