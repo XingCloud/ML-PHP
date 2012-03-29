@@ -44,29 +44,30 @@ class ML{
         }
     }
     public function wrapWords($words){
-        $pattern = "/<.*?>/i";
-        $num = preg_match_all($pattern, $words, $matches);
+        $pattern = "/(<.*?>)/i";
+        $matches = preg_split($pattern, $words, -1, PREG_SPLIT_DELIM_CAPTURE);
 
-        $replaceArray = array();
-        $matcheArray = array();
-        for($i = 0; $i < $num; $i++){
-            $matcheArray[$i] = "<".$matches[0][$i].">";
-            $replaceArray[$i] = "{".$matches[0][$i]."}";
+        $tmpWords = "";
+        for($i = 0; $i < count($matches); $i++){
+            if (preg_match("/<.*>/i", $matches[$i])){
+                $tmpWords .= "{".$matches[$i]."}";
+            }else{
+                $tmpWords .= $matches[$i];
+            }
         }
-        return preg_replace($matcheArray, $replaceArray, $words);
+        return $tmpWords;
     }
 
     public function unWrapWords($words){
-        $pattern = "/{.*?}/i";
-        $num = preg_match_all($pattern, $words, $matches);
+        $pattern = "/({.*?})/i";
+        $matches = preg_split($pattern, $words, -1, PREG_SPLIT_DELIM_CAPTURE);
 
-        $replaceArray = array();
-        $matcheArray = array();
-        for($i = 0; $i < $num; $i++){
-            $matcheArray[$i] = "{".$matches[0][$i]."}";
-            $replaceArray[$i] = trim($matches[0][$i], "{}");
+        $transWrods = "";
+
+        for($i = 0; $i < count($matches); $i++){
+            $transWrods .= trim($matches[$i], "{}");
         }
-        return preg_replace($matcheArray, $replaceArray, $words);
+        return $transWrods;
     }
 }
 
